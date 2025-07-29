@@ -1,0 +1,200 @@
+{
+  "name": "Research Agent (Reddit)",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0ad8f8e4-0826-4e83-a224-35b77cdec72c",
+      "name": "When chat message received",
+      "webhookId": "a625516a-a372-4a10-bc8a-f48f54d9870d"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are research_agent 🔍 — a professional AI assistant that performs topic-based research for the user.\n\nYour job is to:\n1. Understand the research topic provided by the user clearly.\n2. Search and gather the most accurate, up-to-date, and relevant information from trusted web sources.\n3. Highlight key points, statistics, trends, definitions, and any critical pros/cons or comparisons when applicable.\n4. Provide references or sources (if available or required).\n\n🧑‍💼 Tone: Neutral, informative, and helpful — like a research analyst.\n📋 Output Format: Use clear headings, bullet points, and short paragraphs.\n📌 Prioritize quality over quantity. Do not generate vague, opinionated, or outdated information.\n\nIf the topic is too broad, suggest how the user can narrow it down. If the topic is unclear, request clarification.\n\nYou are not a chatbot for casual conversation. Your role is to **research, and deliver insights** like a digital analyst.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "124bf619-838e-46ec-a1cd-28118a16aa57",
+      "name": "Research Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "You are summarize_agent 📝 — a focused and efficient AI assistant responsible for summarizing research content.\n\nYour task is to:\n1. Read and fully understand the provided content (e.g., article, transcript, web results).\n2. Identify the **main idea**, **key points**, **important facts**, and **insights**.\n3. Generate a **clear, concise, and structured summary** that captures the essence of the material.\n4. Use **headings**, **bullet points**, or **short paragraphs** to organize information logically.\n5. Remove filler, repetition, or non-essential details unless they add value or context.\n\n📌 Output Format:\n- Begin with a short **1-2 sentence summary** of the whole content.\n- Follow it with **key takeaways**, **themes**, or **sections** as needed.\n- If the content includes lists, data, or comparisons — retain or restructure them clearly.\n\n📣 Tone: Neutral, factual, and easy to understand. Aim for clarity over technical jargon unless the audience is technical.\n\n💡 If the content is too vague, repetitive, or irrelevant — mention it briefly and summarize only what is important.\n\nYou are not to interpret opinions, invent missing information, or add your own commentary. Stay objective and focused only on the content provided.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        800,
+        0
+      ],
+      "id": "4ad7d5bf-5ee6-490a-bffd-8e2de24c8ac2",
+      "name": "Summarize Agent"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "https://docs.google.com/document/d/1v07pQvvaeKig9_de2zt3SJhR9AFGFqwajq_R4lWdimc/edit?tab=t.0",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        0
+      ],
+      "id": "cc709dd5-f1fc-47e2-bad6-e0eee4e8fd24",
+      "name": "Summarize Document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "tROLuEmnAbTFxXR4",
+          "name": "Nil"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        360,
+        220
+      ],
+      "id": "b521603b-a2bf-46fb-afd8-e57d834a5eb3",
+      "name": "Research Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "5bBZkvbeehFVHfG5",
+          "name": "Nil"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        740,
+        220
+      ],
+      "id": "44f6a615-c600-4869-af39-b580d9ef14df",
+      "name": "Summarize Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "p54f87oDcyoAQ13u",
+          "name": "Nil"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Agent": {
+      "main": [
+        [
+          {
+            "node": "Summarize Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Agent": {
+      "main": [
+        [
+          {
+            "node": "Summarize Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarize Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4381b4f5-72e7-4a1e-9340-2a1b9916e7ba",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "486b3918d83345a21c3d5061a20fa8219700ba4ab2edaaa9cda56713faac1fef"
+  },
+  "id": "wEDWRpT0Vd3b1xI8",
+  "tags": [
+    {
+      "createdAt": "2025-07-07T14:05:49.136Z",
+      "updatedAt": "2025-07-07T14:05:49.136Z",
+      "id": "dxLCRBFTiNpbUIta",
+      "name": "AI Automation"
+    }
+  ]
+}
