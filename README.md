@@ -71,7 +71,6 @@ flowchart LR
 
 > ![Workflow Screenshot](Screenshots/Workflow.jpg)
 
-> ![Google Doc Output](https://docs.google.com/document/d/1civj2X45xW6Cc0aCXGPkg0vU_cNihDAzeLhHshyt5MA/edit?tab=t.0)
 
 ---
 
