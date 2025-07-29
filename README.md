@@ -12,6 +12,7 @@ This repository contains a fully automated **AI-powered workflow** built in [n8n
 ## ⚙️ How It Works
 
 flowchart LR
+
     A[User Sends Topic] --> B[Research Agent (Gemini)]
     B --> C[Summarize Agent (OpenAI)]
     C --> D[Google Docs - Save Summary]
