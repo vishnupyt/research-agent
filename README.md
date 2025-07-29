@@ -69,7 +69,7 @@ flowchart LR
 
 ## 🧪 Demo Screenshots
 
-> ![Workflow Screenshot](assets/workflow.png)
+> ![Workflow Screenshot](Screenshots/Workflow.jpg)
 
 > ![Google Doc Output](assets/google-docs-summary.png)
 
